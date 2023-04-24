@@ -6,7 +6,6 @@ import 'package:urovo_printer/constants/rotation.dart';
 import 'package:urovo_printer/constants/text_style.dart';
 import 'package:urovo_printer/constants/wrap.dart';
 import 'package:urovo_printer/urovo_printer.dart';
-import 'package:myanmar_tools/myanmar_tools.dart';
 
 class PrinterService {
   const PrinterService._internal();
@@ -17,9 +16,6 @@ class PrinterService {
     await _unloadFontToStorage();
     return _instance;
   }
-
-  static const UrovoPrinter printer = UrovoPrinter();
-  static final ZawGyiConverter _converter = ZawGyiConverter();
 
   static late String _fontPath;
   static Future<void> _unloadFontToStorage() async {
@@ -38,13 +34,13 @@ class PrinterService {
     await file.writeAsBytes(bytes.buffer.asUint8List());
   }
 
-  Future<void> checkOut(int height) async {
-    await printer.printPage(0);
-    await printer.paperFeed(180);
+  Future<void> checkOut() async {
+    await UrovoPrinter.printPage(0);
+    await UrovoPrinter.paperFeed(180);
   }
 
   Future<void> clearQueue() async {
-    await printer.clearPage();
+    await UrovoPrinter.clearPage();
   }
 
   Future<int> drawParagraph({
@@ -62,7 +58,6 @@ class PrinterService {
         dy: height,
         fontPath: fontPath,
         fontSize: fontSize,
-        useZawgyiConversion: useZawgyiConversion,
       );
     }
     return height;
@@ -76,13 +71,11 @@ class PrinterService {
     String? fontPath,
     int width = 381,
     int height = -1,
-    bool useZawgyiConversion = true,
     PrintTextStyles styles = const PrintTextStyles(styles: []),
     PrintRotation rotation = PrintRotation.zeroDegree,
     PrintTextWrap wrap = PrintTextWrap.noWrap,
   }) async {
-    if (useZawgyiConversion) data = _converter.unicodeToZawGyi(data);
-    final value = await printer.drawStyledText(
+    final value = await UrovoPrinter.drawStyledText(
       data,
       dx,
       dy,
@@ -104,7 +97,7 @@ class PrinterService {
     int y1 = 0,
     int lineWidth = 8,
   }) async {
-    final value = await printer.drawLine(
+    final value = await UrovoPrinter.drawLine(
       x0: x0,
       y0: y0,
       x1: x1,
@@ -115,6 +108,6 @@ class PrinterService {
   }
 
   Future<int?> drawBitMap(List<int> bytes) async {
-    return await printer.drawBitmapEx(bytes, 0, 0, 348, 0);
+    return await UrovoPrinter.drawBitmapEx(bytes, 0, 0, 348, 0);
   }
 }

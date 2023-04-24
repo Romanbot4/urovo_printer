@@ -1,9 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -14,7 +11,9 @@ import 'package:urovo_printer/urovo_printer.dart';
 import 'package:urovo_printer_example/service/printer_service.dart';
 
 void main() {
-  runApp(const MaterialApp(home: MyApp()));
+  runApp(const MaterialApp(
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -25,12 +24,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _voucherWidget = GlobalKey();
-  final _textController = TextEditingController(text: vocherMM);
+  final _textController = TextEditingController(text: sampleVocherText);
 
+  late PrintWidgetController _printWidgetController;
   late double _width;
 
-  final String _platformVersion = 'Unknown';
+  String _platformVersion = 'Unknown';
   PrinterStatus? _status;
   String _temp = '0';
   String _deviceId = '';
@@ -41,89 +40,83 @@ class _MyAppState extends State<MyApp> {
 
   static const double _printFontSize = 17.0;
 
-  final printManager = const UrovoPrinter();
-
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    loadData();
   }
 
   static const Size pageSize = Size(384, -1);
 
-  Future<void> initPlatformState() async {
+  Future<void> loadData() async {
     try {
-      await printManager.open();
+      final value = await UrovoPrinter.getPlatformVersion();
+      if (value != null) _platformVersion = value;
+    } catch (e) {
+      print("Failed to get Platform Version");
+    }
+
+    try {
+      await UrovoPrinter.open();
     } catch (e) {
       print("Failed to Open");
     }
 
     try {
-      await printManager.setupPage(pageSize);
+      await UrovoPrinter.setupPage(pageSize);
     } catch (e) {
       print("Failed to Setup Page");
     }
 
     try {
-      await printManager.getPlatformVersion() ?? 'Unknown platform version';
+      await UrovoPrinter.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       //
     }
 
     try {
-      _status = await printManager.getStatus();
+      _status = await UrovoPrinter.getStatus();
     } on PlatformException {
       //
     }
 
     try {
-      _temp = (await printManager.getTemp()).toString();
+      _temp = (await UrovoPrinter.getTemp()).toString();
     } on PlatformException {
       //
     }
 
     try {
-      _deviceId = (await printManager.getDeviceId()).toString();
+      _deviceId = (await UrovoPrinter.getDeviceId()).toString();
     } on PlatformException {
       //
     }
 
     try {
-      _deviceTidsn = await printManager.getTIDSN() ?? '';
+      _deviceTidsn = await UrovoPrinter.getTIDSN() ?? '';
     } on PlatformException {
       //
     }
 
-    if (!mounted) setState(() {});
+    if (mounted) setState(() {});
   }
 
   Future<void> _printText() async {
     final printer = await PrinterService.getInstance();
     await printer.clearQueue();
 
-    final height = await printer.drawParagraph(data: _textController.text);
-    await printer.checkOut(height);
+    await printer.drawParagraph(data: _textController.text);
+    await printer.checkOut();
   }
 
   Future<void> _printWidget() async {
     final printer = await PrinterService.getInstance();
     await printer.clearQueue();
-
-    final renderBox = _voucherWidget.currentContext?.findRenderObject()
-        as RenderRepaintBoundary?;
-
-    final image =
-        await renderBox?.toImage(pixelRatio: 1.1 * 341.0 / (_width - 30.0));
-    final bytes = await image?.toByteData(format: ImageByteFormat.png);
-
-    //Image Print
-    if (bytes != null) {
-      final height = await printer.drawBitMap(bytes.buffer.asUint8List());
-      await printer.checkOut(height ?? 0);
-    }
+    await _printWidgetController.printOut();
+    await printer.checkOut();
   }
 
-  static const String vocherMM = """
+  static const String sampleVocherText = """
 City Express (1001045)
 နေရပ်လိပ်စာ - No.353, R-4 မဟာဘနနှင့်ကျောင်း
 သားလမ်း,(၇) QR, ကျောက်တံတားမြို့။
@@ -148,13 +141,18 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
   @override
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
+
+    final pixelRatio = 1.1 * 348.0 / (_width - 40.0); //width - both_padding
+
+    _printWidgetController = PrintWidgetController(pixelRatio: pixelRatio);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
           actions: [
             IconButton(
-              onPressed: initPlatformState,
+              onPressed: loadData,
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
@@ -173,6 +171,8 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                   Text('Printer TIDSN: $_deviceTidsn\n'),
                   Text('Status: ${_status?.name}\n'),
                   Text('Temp: $_temp\n'),
+
+                  /// SET GREY
                   const Text('Set Grey'),
                   Slider(
                     min: GreyValue.min * 1.0,
@@ -184,11 +184,13 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                       // update if only differ
                       if (nextLevel == _currentGreyValue) return;
 
-                      await printManager.setGreyLevel(nextLevel);
+                      await UrovoPrinter.setGreyLevel(nextLevel);
                       _currentGreyValue = level.ceil();
                       setState(() {});
                     },
                   ),
+
+                  /// SET SPEED
                   const Text('Set Speed'),
                   Slider(
                     min: SpeedValue.min * 1.0,
@@ -200,11 +202,13 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                       // update if only differ
                       if (nextLevel == _currentSpeedValue) return;
 
-                      await printManager.setSpeedLevel(nextLevel);
+                      await UrovoPrinter.setSpeedLevel(nextLevel);
                       _currentSpeedValue = level.ceil();
                       setState(() {});
                     },
                   ),
+
+                  /// EXAMPLE OF PRINT TEXT
                   OutlinedButton(
                     onPressed: _printText,
                     child: const Text('Text Print'),
@@ -217,12 +221,16 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                     maxLines: 5,
                     maxLength: 1000,
                   ),
+
+                  /// EXAMPLE OF PRINT IMAGE
                   OutlinedButton(
                     onPressed: _printWidget,
                     child: const Text('Widget Print'),
                   ),
-                  RepaintBoundary(
-                    key: _voucherWidget,
+
+                  /// VOCHER WIDGET
+                  PrintWidget(
+                    controller: _printWidgetController,
                     child: Container(
                       color: Colors.white,
                       child: Column(
