@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:urovo_printer/constants/rotation.dart';
+import 'package:urovo_printer/constants/status.dart';
 import 'package:urovo_printer/constants/text_style.dart';
 import 'package:urovo_printer/constants/wrap.dart';
 import 'package:urovo_printer/urovo_printer.dart';
@@ -12,13 +13,74 @@ class PrinterService {
 
   static const PrinterService _instance = PrinterService._internal();
 
+  static bool _isInitialized = false;
   static Future<PrinterService> getInstance() async {
-    await _unloadFontToStorage();
+    if (!_isInitialized) await _initialize();
+    _isInitialized = true;
     return _instance;
   }
 
+  static String? platformVersion;
+  static String? deviceId;
+  static String? temp;
+  static String? deviceTidsn;
+  static PrinterStatus? status;
+  static const Size pageSize = Size(384, -1);
+
+  static Future<void> _initialize() async {
+    await unloadFontToStorage();
+
+    try {
+      platformVersion = await UrovoPrinter.getPlatformVersion();
+    } catch (e) {
+      print("Failed to get Platform Version");
+    }
+
+    try {
+      await UrovoPrinter.open();
+    } catch (e) {
+      print("Failed to Open");
+    }
+
+    try {
+      await UrovoPrinter.setupPage(pageSize);
+    } catch (e) {
+      print("Failed to Setup Page");
+    }
+
+    try {
+      platformVersion = await UrovoPrinter.getPlatformVersion() ?? 'Unknown';
+    } on PlatformException {
+      //
+    }
+
+    try {
+      status = await UrovoPrinter.getStatus();
+    } on PlatformException {
+      //
+    }
+
+    try {
+      temp = (await UrovoPrinter.getTemp()).toString();
+    } on PlatformException {
+      //
+    }
+
+    try {
+      deviceId = (await UrovoPrinter.getDeviceId()).toString();
+    } on PlatformException {
+      //
+    }
+
+    try {
+      deviceTidsn = await UrovoPrinter.getTIDSN() ?? '';
+    } on PlatformException {
+      //
+    }
+  }
+
   static late String _fontPath;
-  static Future<void> _unloadFontToStorage() async {
+  static Future<void> unloadFontToStorage() async {
     final extDir = await getExternalStorageDirectory();
     if (extDir == null || !extDir.path.startsWith('/storage/emulated/0/')) {
       return;
