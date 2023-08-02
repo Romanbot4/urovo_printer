@@ -250,10 +250,10 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                             style: TextStyle(fontSize: _printFontSize),
                           ),
                           const SizedBox(height: 24.0),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
+                            children: [
                               Text(
                                 '01/NTH',
                                 style: TextStyle(fontSize: _printFontSize),
@@ -264,10 +264,10 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                               ),
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
                                 'Ref No : 136546864',
                                 style: TextStyle(fontSize: _printFontSize),
@@ -275,26 +275,26 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                             ],
                           ),
                           const SizedBox(height: 24.0),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 width: 30.0,
                                 child: Text(
                                   '1',
                                   style: TextStyle(fontSize: _printFontSize),
                                 ),
                               ),
-                              const Text(
+                              Text(
                                 'SUI YOMA SPECIAL 330ML',
                                 style: TextStyle(fontSize: _printFontSize),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               SizedBox(
                                 width: 70,
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Ks',
                                       style:
@@ -311,10 +311,10 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                               ),
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
+                            children: [
                               SizedBox(width: 30.0),
                               Text(
                                 '(CAN)',
@@ -322,26 +322,26 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                               ),
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 width: 30.0,
                                 child: Text(
                                   '2',
                                   style: TextStyle(fontSize: _printFontSize),
                                 ),
                               ),
-                              const Text(
+                              Text(
                                 'SUI CHANG BEER 500ML',
                                 style: TextStyle(fontSize: _printFontSize),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               SizedBox(
                                 width: 70,
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Ks',
                                       style:
@@ -358,10 +358,10 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                               ),
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
+                            children: [
                               SizedBox(width: 30.0),
                               Text(
                                 '(CAN)',
@@ -375,22 +375,22 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                             color: Colors.black,
                             margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 width: 30.0,
                                 child: Text(
                                   'Tax',
                                   style: TextStyle(fontSize: _printFontSize),
                                 ),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               SizedBox(
                                 width: 70,
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Ks',
                                       style:
@@ -407,21 +407,21 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                               ),
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 child: Text(
                                   'Container Charges',
                                   style: TextStyle(fontSize: _printFontSize),
                                 ),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               SizedBox(
                                 width: 70,
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Ks',
                                       style:
@@ -438,21 +438,21 @@ City Express လိုသူများအတွက် ဆက်သွယ်ရ
                               ),
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 child: Text(
                                   'Delivery Charges',
                                   style: TextStyle(fontSize: _printFontSize),
                                 ),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               SizedBox(
                                 width: 70,
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Ks',
                                       style:
